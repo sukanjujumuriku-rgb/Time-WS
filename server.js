@@ -1,44 +1,35 @@
-
+const http = require("http");
 const WebSocket = require("ws");
 
 const port = process.env.PORT || 10000;
-const wss = new WebSocket.Server({ port });
 
-console.log(`WebSocket server started on ${port}`);
+const server = http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end("OK");
+});
+
+const wss = new WebSocket.Server({
+  server,
+  perMessageDeflate: false
+});
+
+server.listen(port, () => {
+  console.log(`Server started on ${port}`);
+});
 
 wss.on("connection", (ws, req) => {
-console.log("Minecraft connected!");
-console.log("IP:", req.socket.remoteAddress);
+  console.log("Minecraft connected!");
+  console.log("IP:", req.socket.remoteAddress);
 
-ws.on("message", (data) => {
-const text = data.toString();
-console.log("Received:", text);
+  ws.on("message", (data) => {
+    console.log("Received:", data.toString());
+  });
 
-```
-try {
-  const obj = JSON.parse(text);
-  console.log(
-    "Purpose:",
-    obj.header?.messagePurpose,
-    "Type:",
-    obj.header?.messageType
-  );
-} catch (err) {
-  console.log("Not JSON.");
-}
-```
+  ws.on("close", (code, reason) => {
+    console.log("Disconnected:", code, reason.toString());
+  });
 
-});
-
-ws.on("close", (code, reason) => {
-console.log(
-"Disconnected:",
-code,
-reason ? reason.toString() : ""
-);
-});
-
-ws.on("error", (err) => {
-console.error("Socket error:", err);
-});
+  ws.on("error", (err) => {
+    console.error(err);
+  });
 });
