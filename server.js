@@ -10,23 +10,20 @@ console.log("Minecraft connected!");
 console.log("IP:", req.socket.remoteAddress);
 
 ws.on("message", (data) => {
-try {
 const text = data.toString();
 console.log("Received:", text);
 
 ```
-  // JSONならパースして見やすく表示
-  try {
-    const obj = JSON.parse(text);
-    console.log(
-      "Purpose:",
-      obj.header?.messagePurpose,
-      "Type:",
-      obj.header?.messageType
-    );
-  } catch (_) {}
+try {
+  const obj = JSON.parse(text);
+  console.log(
+    "Purpose:",
+    obj.header?.messagePurpose,
+    "Type:",
+    obj.header?.messageType
+  );
 } catch (err) {
-  console.error("Message error:", err);
+  console.log("Not JSON.");
 }
 ```
 
